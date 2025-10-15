@@ -15,7 +15,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from teleco_daisy import DaisyShadeCover, DaisySlatsCover
+from teleco_daisy import DaisyAwningCover, DaisyShadeCover, DaisySlatsCover
 
 from .const import DOMAIN
 
@@ -32,7 +32,9 @@ async def async_setup_entry(
 
 
 class TelecoDaisyCover(CoverEntity):
-    def __init__(self, cover: DaisySlatsCover | DaisyShadeCover) -> None:
+    def __init__(
+        self, cover: DaisyAwningCover | DaisyShadeCover | DaisySlatsCover
+    ) -> None:
         self._cover = cover
 
         self._attr_unique_id = str(cover.idInstallationDevice)
@@ -41,12 +43,15 @@ class TelecoDaisyCover(CoverEntity):
         if isinstance(cover, DaisySlatsCover):
             self._attr_device_class = CoverDeviceClass.BLIND
             self._attr_supported_features = (
-                CoverEntityFeature.OPEN_TILT
+                CoverEntityFeature.OPEN
+                | CoverEntityFeature.CLOSE
+                | CoverEntityFeature.STOP
+                | CoverEntityFeature.OPEN_TILT
                 | CoverEntityFeature.CLOSE_TILT
                 | CoverEntityFeature.SET_TILT_POSITION
                 | CoverEntityFeature.STOP_TILT
             )
-        elif isinstance(cover, DaisyShadeCover):
+        elif isinstance(cover, (DaisyAwningCover, DaisyShadeCover)):
             self._attr_device_class = CoverDeviceClass.SHADE
             self._attr_supported_features = (
                 CoverEntityFeature.OPEN

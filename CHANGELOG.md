@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.12] - 2025-10-15
+
+### Added
+-   Added DaisyAwningsCover  `dType 22, dModel 21` #25  
+
+
 ## [0.1.10] - 2025-09-04
 
 ### Added
