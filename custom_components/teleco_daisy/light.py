@@ -126,4 +126,5 @@ class TelecoDaisyLight(LightEntity):
         self._light.update_state()
 
     def update(self) -> None:
-        self._light.update_state()
+        stati = self._light.update_state()
+        _LOGGER.debug(f"Light update return value: {stati}")

@@ -51,8 +51,15 @@ class TelecoDaisyCover(CoverEntity):
                 | CoverEntityFeature.SET_TILT_POSITION
                 | CoverEntityFeature.STOP_TILT
             )
-        elif isinstance(cover, (DaisyAwningCover, DaisyShadeCover)):
+        elif isinstance(cover, DaisyShadeCover):
             self._attr_device_class = CoverDeviceClass.SHADE
+            self._attr_supported_features = (
+                CoverEntityFeature.OPEN
+                | CoverEntityFeature.CLOSE
+                | CoverEntityFeature.STOP
+            )
+        elif isinstance(cover, DaisyAwningCover):
+            self._attr_device_class = CoverDeviceClass.AWNING
             self._attr_supported_features = (
                 CoverEntityFeature.OPEN
                 | CoverEntityFeature.CLOSE
@@ -71,18 +78,9 @@ class TelecoDaisyCover(CoverEntity):
     def is_closed(self) -> bool | None:
         return self._cover.is_closed
 
-    @property
-    def current_cover_position(self) -> int | None:
-        return self._cover.position
-
-    @property
-    def current_cover_tilt_position(self) -> int | None:
-        return self._cover.position
-
     def update(self) -> None:
-        self._cover.update_state()
-        self._attr_is_closed = self._cover.is_closed
-        self._attr_current_cover_position = self._cover.position
+        stati = self._cover.update_state()
+        _LOGGER.debug(f"Cover update return value: {stati}")
 
     # @property
     # def is_closing(self) -> bool:
@@ -103,18 +101,6 @@ class TelecoDaisyCover(CoverEntity):
         self._cover.close_cover()
         self.update()
 
-    def set_cover_position(self, **kwargs: Any) -> None:
-        position = kwargs[ATTR_POSITION]
-        if position <= 15:
-            self._cover.close_cover()
-        elif 15 < position <= 48:
-            self._cover.open_cover("33")
-        elif 48 < position <= 81:
-            self._cover.open_cover("66")
-        else:
-            self._cover.open_cover("100")
-        self.update()
-
     def stop_cover(self, **kwargs: Any) -> None:
         self._cover.stop_cover()
         self.update()
@@ -127,8 +113,19 @@ class TelecoDaisyCover(CoverEntity):
         self._cover.close_cover()
         self.update()
 
-    def set_cover_tilt_position(self, **kwargs: Any) -> None:
-        position = kwargs[ATTR_TILT_POSITION]
+    def stop_cover_tilt(self, **kwargs: Any) -> None:
+        self._cover.stop_cover()
+        self.update()
+
+    @property
+    def current_cover_position(self) -> int | None:
+        return self._cover.position
+
+    @property
+    def current_cover_tilt_position(self) -> int | None:
+        return self._cover.position
+
+    def _set_cover_position(self, position: int) -> None:
         if position <= 15:
             self._cover.close_cover()
         elif 15 < position <= 48:
@@ -139,6 +136,8 @@ class TelecoDaisyCover(CoverEntity):
             self._cover.open_cover("100")
         self.update()
 
-    def stop_cover_tilt(self, **kwargs: Any) -> None:
-        self._cover.stop_cover()
-        self.update()
+    def set_cover_position(self, **kwargs: Any) -> None:
+        self._set_cover_position(kwargs[ATTR_POSITION])
+
+    def set_cover_tilt_position(self, **kwargs: Any) -> None:
+        self._set_cover_position(kwargs[ATTR_TILT_POSITION])
