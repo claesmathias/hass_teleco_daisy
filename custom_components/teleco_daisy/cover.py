@@ -119,11 +119,11 @@ class TelecoDaisyCover(CoverEntity):
 
     @property
     def current_cover_position(self) -> int | None:
-        return self._cover.position
+        return getattr(self._cover, "position", None)
 
     @property
     def current_cover_tilt_position(self) -> int | None:
-        return self._cover.position
+        return getattr(self._cover, "position", None)
 
     def _set_cover_position(self, position: int) -> None:
         if position <= 15:
