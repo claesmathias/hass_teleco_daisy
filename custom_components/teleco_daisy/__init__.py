@@ -9,7 +9,7 @@ from .hub import DaisyHub
 
 _LOGGER = logging.getLogger(__name__)
 
-PLATFORMS: list[str] = ["light", "cover"]
+PLATFORMS: list[str] = ["light", "cover", "climate"]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:

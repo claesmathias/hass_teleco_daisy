@@ -24,8 +24,8 @@ class DaisyHub(TelecoDaisy):
         self.lights = []
         self.covers = []
         self.heaters = []
-        for installation in self.get_account_installation_list():
-            for room in self.get_room_list(installation):
+        for installation in self.get_installations():
+            for room in self.get_rooms(installation):
                 for device in room.deviceList:
                     if isinstance(device, DaisyLight):
                         self.lights += [device]
