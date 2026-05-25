@@ -4,8 +4,8 @@ import logging
 
 from homeassistant.core import HomeAssistant
 
-import teleco_daisy as _lib
-from teleco_daisy import DaisyCover, DaisyHeater4CH, DaisyLight, TelecoDaisy
+from . import _lib
+from ._lib import DaisyCover, DaisyHeater4CH, DaisyLight, TelecoDaisy
 
 _LOGGER = logging.getLogger(__name__)
 

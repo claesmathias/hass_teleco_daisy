@@ -15,7 +15,7 @@ from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.util.color import brightness_to_value, value_to_brightness
 
-from teleco_daisy import DaisyRGBLight, DaisyWhite4LevelLight
+from ._lib import DaisyRGBLight, DaisyWhite4LevelLight
 
 from .const import DOMAIN
 

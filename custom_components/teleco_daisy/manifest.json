@@ -7,6 +7,6 @@
   "documentation": "https://github.com/andreasnuesslein/hass_teleco_daisy",
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/andreasnuesslein/hass_teleco_daisy/issues",
-  "requirements": ["teleco_daisy>=0.2.0"],
-  "version": "0.2.0"
+  "requirements": ["requests>=2.28", "pydantic>=2.0"],
+  "version": "0.2.3"
 }
