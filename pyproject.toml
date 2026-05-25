@@ -6,7 +6,7 @@ readme = "README.md"
 requires-python = ">=3.11"
 # ! REMEMBER the manifest.json
 dependencies = [
-    "teleco-daisy==0.1.12.3",
+    "teleco-daisy==0.2.0",
 ]
 
 [dependency-groups]

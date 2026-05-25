@@ -1,8 +1,13 @@
 from __future__ import annotations
 
+import logging
+
 from homeassistant.core import HomeAssistant
 
+import teleco_daisy as _lib
 from teleco_daisy import DaisyCover, DaisyHeater4CH, DaisyLight, TelecoDaisy
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class DaisyHub(TelecoDaisy):
@@ -20,19 +25,65 @@ class DaisyHub(TelecoDaisy):
 
         self.online = True
 
+        _LOGGER.debug(
+            "DaisyHub created, teleco_daisy library version: %s",
+            getattr(_lib, "__version__", "unknown"),
+        )
+
     def fetch_entities(self):
         self.lights = []
         self.covers = []
         self.heaters = []
-        for installation in self.get_installations():
-            for room in self.get_rooms(installation):
+
+        _LOGGER.debug("fetch_entities: starting installation discovery")
+        installations = self.get_installations()
+        _LOGGER.debug("fetch_entities: found %d installation(s)", len(installations))
+
+        for installation in installations:
+            _LOGGER.debug("fetch_entities: processing installation %s", installation)
+
+            rooms = self.get_rooms(installation)
+            _LOGGER.debug(
+                "fetch_entities: installation %s has %d room(s)",
+                installation.instCode,
+                len(rooms),
+            )
+
+            for room in rooms:
+                _LOGGER.debug(
+                    "fetch_entities: room '%s' has %d device(s)",
+                    room.roomDescription,
+                    len(room.deviceList),
+                )
                 for device in room.deviceList:
+                    _LOGGER.debug(
+                        "fetch_entities: device '%s' type=%s model=%s -> %s",
+                        device.label,
+                        device.idDevicetype,
+                        device.idDevicemodel,
+                        type(device).__name__,
+                    )
                     if isinstance(device, DaisyLight):
-                        self.lights += [device]
+                        self.lights.append(device)
                     elif isinstance(device, DaisyCover):
-                        self.covers += [device]
+                        self.covers.append(device)
                     elif isinstance(device, DaisyHeater4CH):
-                        self.heaters += [device]
+                        self.heaters.append(device)
+                    else:
+                        _LOGGER.warning(
+                            "fetch_entities: unrecognised device '%s' "
+                            "(type=%s model=%s) — not added to any platform",
+                            device.label,
+                            device.idDevicetype,
+                            device.idDevicemodel,
+                        )
+
+        _LOGGER.debug(
+            "fetch_entities: complete — %d light(s), %d cover(s), %d heater(s)",
+            len(self.lights),
+            len(self.covers),
+            len(self.heaters),
+        )
 
     @property
     def hub_id(self) -> str:
